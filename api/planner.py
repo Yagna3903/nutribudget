@@ -16,7 +16,7 @@ def load_dataset(csv_path: str) -> pd.DataFrame:
         print(f"Error: Could not find file at {csv_path}")
         return pd.DataFrame()
 
-def planner(budget: float, people: int, diet_type: str, df: pd.DataFrame) -> Dict[str, Any]:
+def planner(budget: float, people: int, diet_type: str, goal: str, df: pd.DataFrame) -> Dict[str, Any]:
     """
     Generates a grocery plan using greedy selection based on value-for-money.
     """
@@ -35,8 +35,24 @@ def planner(budget: float, people: int, diet_type: str, df: pd.DataFrame) -> Dic
     # Metric = nutri_score_app / price_per_100g
     # Avoid division by zero
     filtered = filtered[filtered["price_per_100g"] > 0.01].copy()
+    
+    # Base metric
     filtered["value_metric"] = filtered["nutri_score_app"] / filtered["price_per_100g"]
     
+    # Goal Adjustments
+    if goal == "high_protein":
+        # Boost items with high protein per dollar
+        # We can use the 'protein' column (g)
+        if "protein" in filtered.columns:
+            # Normalize protein roughly (0-30g usually)
+            # Add a bonus to value_metric
+            filtered["value_metric"] += (filtered["protein"] / filtered["price_per_100g"]) * 0.5
+            
+    elif goal == "low_sugar":
+        # Penalize sugar
+        if "sugar" in filtered.columns:
+            filtered["value_metric"] -= (filtered["sugar"] / filtered["price_per_100g"]) * 0.5
+
     # UX Improvement: If diet is explicitly Non-Vegetarian, boost non-veg items
     # so they actually appear in the basket (otherwise cheap staples dominate)
     if "non" in diet_lower and "veg_nonveg" in filtered.columns:
