@@ -41,6 +41,7 @@ export default function GridScan({
     let last = performance.now();
 
     function resize() {
+      if (!canvas) return;
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       const parent = canvas.parentElement || document.body;
       width = parent.clientWidth;
