@@ -26,7 +26,8 @@ export default function BasketPage() {
         <div className="py-6 space-y-6">
           <h1 className="text-3xl font-bold text-white">Basket</h1>
           <div className="bg-[rgba(255,255,255,0.03)] rounded-lg p-4">
-            <BasketList />
+            {/* TODO: Connect to actual plan data source */}
+            <BasketList items={[]} />
           </div>
         </div>
       </main>
