@@ -1,4 +1,0 @@
-"""
-NutriBudget Backend Package
-"""
-
