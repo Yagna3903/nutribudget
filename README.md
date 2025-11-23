@@ -36,7 +36,7 @@ NutriBudget helps users (especially budget-conscious households) get the **best 
 
 ### 1. Clone and Navigate
 ```bash
-git clone <your-repo-url>
+git clone nutribudget
 cd nutribudget
 ```
 
