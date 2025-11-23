@@ -41,12 +41,12 @@ export default function Home() {
       <GradualBlur
         position="bottom"
         height="12rem"
-        strength={2}
-        divCount={8}
+        strength={1}
+        divCount={2}
         curve="bezier"
-        exponential={true}
-        opacity={1}
-        target="page"
+        exponential={false}
+        opacity={0.6}
+        target="parent"
         zIndex={50}
       />
     </div>

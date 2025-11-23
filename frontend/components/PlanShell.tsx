@@ -54,7 +54,7 @@ export default function PlanShell() {
   return (
     <div className="mx-auto w-full max-w-full space-y-6 py-8 text-white">
       <section>
-        <h1 className="text-3xl font-bold text-black mb-2 tracking-tight text-center">
+        <h1 className="text-3xl font-bold text-white mb-2 tracking-tight text-center">
           NutriBudget — Plan Builder
         </h1>
       </section>
