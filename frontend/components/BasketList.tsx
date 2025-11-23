@@ -39,20 +39,20 @@ export default function BasketList({ items }: Props) {
         >
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="font-medium text-white">{item.name}</h3>
+              <h3 className="font-medium text-white">{item.product_name}</h3>
               <p className="text-xs text-white/50 uppercase tracking-wider mt-0.5">
                 {item.store} • {item.category}
               </p>
             </div>
-            <span className="text-[var(--accent-primary)] font-mono">${item.cost.toFixed(2)}</span>
+            <span className="text-[var(--accent-primary)] font-mono">${item.estimated_cost.toFixed(2)}</span>
           </div>
 
           <div className="mt-3 flex gap-4 text-sm text-white/70">
-            <span>{item.units} × {item.unitGrams}g</span>
+            <span>{item.quantity_units} × {item.unit}</span>
             <span className="w-px h-4 bg-white/20"></span>
-            <span>{item.calories.toFixed(0)} cal</span>
+            <span className="text-[var(--accent-secondary)]">Health: {item.health_score}</span>
             <span className="w-px h-4 bg-white/20"></span>
-            <span>{item.protein.toFixed(1)}g prot</span>
+            <span className="text-[var(--accent-tertiary)]">{item.cluster_label}</span>
           </div>
         </div>
       ))}
