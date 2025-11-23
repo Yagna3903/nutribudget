@@ -138,47 +138,111 @@ def api_stats():
         return jsonify({"error": str(e)}), 500
 
 
+
 @app.route("/api/plan", methods=["POST"])
 def api_plan():
     """
     POST /api/plan implementation for Phase 1.
 
-    - Validates basic input (budget > 0, people >= 1).
-    - Reads dietType and goal.
+    - Validates all input parameters comprehensively
+    - Reads dietType and goal with validation
     - Delegates to planner() to build a response that matches API_CONTRACT.md.
     """
     body = request.get_json(force=True) or {}
 
+    # Validate required fields
+    required_fields = ["budget", "people", "dietType", "goal"]
+    missing_fields = [field for field in required_fields if field not in body]
+    if missing_fields:
+        logger.warning(f"Missing required fields: {missing_fields}")
+        return jsonify({
+            "error": "Missing required fields",
+            "missing": missing_fields
+        }), 400
+
     try:
         budget = float(body.get("budget", 0))
         people = int(body.get("people", 1))
-        diet_type = str(body.get("dietType", "veg"))
-        goal = str(body.get("goal", "balanced"))
+        diet_type = str(body.get("dietType", "veg")).lower()
+        goal = str(body.get("goal", "balanced")).lower()
     except (TypeError, ValueError) as e:
         logger.error(f"Invalid request body: {e}")
-        return jsonify({"error": "Invalid request body"}), 400
+        return jsonify({
+            "error": "Invalid data types",
+            "message": "budget must be a number, people must be an integer"
+        }), 400
 
-    if budget <= 0 or people < 1:
-        logger.warning(f"Invalid parameters: budget={budget}, people={people}")
-        return jsonify({"error": "budget must be > 0 and people must be >= 1"}), 400
+    # Validate budget
+    if budget <= 0:
+        logger.warning(f"Invalid budget: {budget}")
+        return jsonify({
+            "error": "Invalid budget",
+            "message": "Budget must be greater than 0"
+        }), 400
     
-    # Handle edge cases
-    if budget < 5:
+    if budget <= 5:
         logger.info(f"Very low budget: {budget}")
         return jsonify({
             "error": "Budget too low",
-            "message": "Budget must be at least $5 to meet basic nutrition needs."
+            "message": "Budget must be greater than $5 to meet basic nutrition needs."
+        }), 400
+    
+    if budget > 1000:
+        logger.warning(f"Very high budget: {budget}")
+        return jsonify({
+            "error": "Budget too high",
+            "message": "Budget must be less than $1000. Please contact support for larger budgets."
+        }), 400
+
+    # Validate people
+    if people < 1:
+        logger.warning(f"Invalid people count: {people}")
+        return jsonify({
+            "error": "Invalid people count",
+            "message": "Number of people must be at least 1"
+        }), 400
+    
+    if people > 20:
+        logger.warning(f"Very large household: {people}")
+        return jsonify({
+            "error": "Household too large",
+            "message": "Maximum supported household size is 20 people"
+        }), 400
+
+    # Validate diet type
+    valid_diet_types = ["veg", "vegetarian", "nonveg", "non-veg", "mixed"]
+    if diet_type not in valid_diet_types:
+        logger.warning(f"Invalid diet type: {diet_type}")
+        return jsonify({
+            "error": "Invalid diet type",
+            "message": f"dietType must be one of: {', '.join(valid_diet_types)}",
+            "received": diet_type
+        }), 400
+
+    # Validate goal
+    valid_goals = ["balanced", "high_protein", "low_sugar"]
+    if goal not in valid_goals:
+        logger.warning(f"Invalid goal: {goal}")
+        return jsonify({
+            "error": "Invalid goal",
+            "message": f"goal must be one of: {', '.join(valid_goals)}",
+            "received": goal
         }), 400
     
     logger.info(f"Planning for budget=${budget}, people={people}, diet={diet_type}, goal={goal}")
     
     try:
         result = planner(budget, people, diet_type, goal, df)
-        logger.info(f"Plan generated: {len(result['basket'])} items, total cost=${result['totals']['cost']}")
+        logger.info(f"Plan generated: {len(result['basket'])} items, total cost=${result['totals']['cost']:.2f}")
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error in planner: {e}")
-        return jsonify({"error": "Failed to generate plan", "details": str(e)}), 500
+        return jsonify({
+            "error": "Failed to generate plan",
+            "message": "An error occurred while generating your meal plan. Please try again.",
+            "details": str(e) if app.debug else None
+        }), 500
+
 
 
 @app.route("/", methods=["GET"])
