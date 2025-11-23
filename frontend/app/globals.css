@@ -13,9 +13,8 @@
   --accent-primary: #00FFFF;   /* Cyan */
   --accent-secondary: #0080FF; /* Azure */
   --accent-tertiary: #0000FF;  /* Blue */
-}
-
-@theme inline {
+  
+  /* Color and Font Variables */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
