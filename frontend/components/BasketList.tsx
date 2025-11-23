@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import type { BasketItem } from "../types/plan";
 
@@ -32,9 +33,8 @@ export default function BasketList({ items }: Props) {
       {items.map((item, i) => (
         <div
           key={String(item.product_id)}
-          className={`p-4 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-          }`}
+          className={`p-4 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+            }`}
           style={{ transitionDelay: `${i * 50}ms` }}
         >
           <div className="flex justify-between items-start">
@@ -46,7 +46,7 @@ export default function BasketList({ items }: Props) {
             </div>
             <span className="text-[var(--accent-primary)] font-mono">${item.cost.toFixed(2)}</span>
           </div>
-          
+
           <div className="mt-3 flex gap-4 text-sm text-white/70">
             <span>{item.units} × {item.unitGrams}g</span>
             <span className="w-px h-4 bg-white/20"></span>
