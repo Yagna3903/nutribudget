@@ -17,8 +17,8 @@ DATA_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
     "data-ml",
-    "raw",
-    "canada_grocery_nutrition_5000.csv",
+    "outputs",
+    "foods_scored.csv",
 )
 
 # Load dataset once at startup
@@ -210,7 +210,7 @@ def api_plan():
         }), 400
 
     # Validate diet type
-    valid_diet_types = ["veg", "vegetarian", "nonveg", "non-veg", "mixed"]
+    valid_diet_types = ["veg", "vegetarian", "nonveg", "non-veg", "non_veg", "mixed", "vegan"]
     if diet_type not in valid_diet_types:
         logger.warning(f"Invalid diet type: {diet_type}")
         return jsonify({
@@ -233,7 +233,7 @@ def api_plan():
     
     try:
         result = planner(budget, people, diet_type, goal, df)
-        logger.info(f"Plan generated: {len(result['basket'])} items, total cost=${result['totals']['cost']:.2f}")
+        logger.info(f"Plan generated: {len(result['items'])} items, total cost=${result['totals']['total_spent']:.2f}")
         return jsonify(result)
     except Exception as e:
         logger.error(f"Error in planner: {e}")
