@@ -32,8 +32,9 @@ export default function GridScan({
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const ctxOrNull = canvas.getContext("2d");
+    if (!ctxOrNull) return;
+    const ctx = ctxOrNull;
 
     let width = 0;
     let height = 0;
@@ -41,6 +42,7 @@ export default function GridScan({
     let last = performance.now();
 
     function resize() {
+      if (!canvas) return;
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       const parent = canvas.parentElement || document.body;
       width = parent.clientWidth;
