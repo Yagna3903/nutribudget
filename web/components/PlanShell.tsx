@@ -28,7 +28,8 @@ export default function PlanShell() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/plan", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000";
+      const res = await fetch(`${API_URL}/api/plan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(params),
