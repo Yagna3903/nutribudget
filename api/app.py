@@ -10,7 +10,7 @@ app = Flask(__name__)
 # CORS configuration for local dev and production
 CORS(app, origins=[
     "http://localhost:3000",  # Local development
-    "https://nutribudget.vercel.app",  # Production (update this after Vercel deployment)
+    "https://nutribudget-web.vercel.app",  # Production (update this after Vercel deployment)
     "https://*.vercel.app",  # Vercel preview deployments
 ], supports_credentials=True)
 
