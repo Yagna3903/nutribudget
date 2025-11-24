@@ -18,12 +18,10 @@ CORS(app, origins=[
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Path to CSV (relative to backend folder)
+# Path to CSV (in api/data folder for deployment)
 DATA_PATH = os.path.join(
     os.path.dirname(__file__),
-    "..",
-    "data-ml",
-    "outputs",
+    "data",
     "foods_scored.csv",
 )
 
