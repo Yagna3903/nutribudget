@@ -9,5 +9,5 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.5
-      - key: AIzaSyD60WugJ6Ibt3CwjxAaY-WhhhNubtko9Fg
+      - key: GEMINI_API_KEY
         sync: false
