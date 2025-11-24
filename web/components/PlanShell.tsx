@@ -9,6 +9,8 @@ import ChartsSection from "./ChartsSection";
 import MagicBento from "./MagicBento";
 import SDGSection from "./SDGSection";
 import MealSuggestions from "./MealSuggestions";
+import SmartChef from "./SmartChef";
+import LocalShopper from "./LocalShopper"; // Added SmartChef import
 import { exportShoppingList } from "../utils/exportList";
 import type { PlanResponse } from "../types/plan";
 
@@ -118,6 +120,13 @@ export default function PlanShell() {
           </div>
         )}
 
+        {/* Smart Chef */}
+        {plan && plan.items.length > 0 && (
+          <div className="lg:col-span-2">
+            <SmartChef items={plan.items} />
+          </div>
+        )}
+
         {/* Basket with Export */}
         <div className="rounded-xl p-6 bg-white border-2 border-amber-200 hover:border-amber-300 transition-all duration-300 shadow-md hover:shadow-lg lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
@@ -138,17 +147,24 @@ export default function PlanShell() {
           <BasketList items={plan ? plan.items : []} />
         </div>
 
-        {/* Charts */}
-        <div className="rounded-xl p-6 bg-white border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 shadow-md hover:shadow-lg lg:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl">📊</span>
-            <h2 className="text-xl font-semibold text-gray-800">Basket Analysis</h2>
+        {/* Charts & Local Shopper Grid */}
+        {plan && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:col-span-2">
+            <div className="lg:col-span-2 rounded-xl p-6 bg-white border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 shadow-md hover:shadow-lg">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">📊</span>
+                <h2 className="text-xl font-semibold text-gray-800">Basket Analysis</h2>
+              </div>
+              <ChartsSection
+                clusterBreakdown={plan.clusterBreakdown}
+                processingBreakdown={plan.processingBreakdown}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <LocalShopper items={plan.items} />
+            </div>
           </div>
-          <ChartsSection
-            clusterBreakdown={plan ? plan.clusterBreakdown : {}}
-            processingBreakdown={plan ? plan.processingBreakdown : {}}
-          />
-        </div>
+        )}
       </div>
     </div>
   );
