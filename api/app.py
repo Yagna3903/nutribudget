@@ -244,6 +244,98 @@ def api_plan():
         }), 500
 
 
+# --- Smart Chef Integration ---
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure Gemini
+# Ideally, this should be an environment variable.
+# For now, we'll check for the env var, and if missing, log a warning.
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    logger.warning("GEMINI_API_KEY not found in environment variables. Smart Chef features will fail.")
+
+@app.route("/api/recipes", methods=["POST"])
+def api_recipes():
+    """
+    POST /api/recipes
+    Generates recipes based on the provided list of ingredients (from the basket).
+    """
+    if not GEMINI_API_KEY:
+        return jsonify({
+            "error": "Configuration Error",
+            "message": "Smart Chef is not configured (missing API Key)."
+        }), 503
+
+    body = request.get_json(force=True) or {}
+    items = body.get("items", [])
+    
+    if not items or len(items) == 0:
+        return jsonify({
+            "error": "No items provided",
+            "message": "Please provide a list of ingredients."
+        }), 400
+
+    # Extract just the product names for the prompt
+    # Handle both string list and object list (if full basket items are sent)
+    ingredient_names = []
+    for item in items:
+        if isinstance(item, str):
+            ingredient_names.append(item)
+        elif isinstance(item, dict) and "product_name" in item:
+            ingredient_names.append(item["product_name"])
+    
+    ingredients_str = ", ".join(ingredient_names[:20]) # Limit to top 20 to avoid huge prompts
+
+    try:
+        # Switching to gemini-flash-latest as it is explicitly available for this key
+        model = genai.GenerativeModel('gemini-flash-latest')
+        
+        prompt = f"""
+        You are a creative chef helping a budget-conscious user.
+        Create 3 simple, healthy, and delicious recipes using a subset of these ingredients: {ingredients_str}.
+        You can assume they have basic pantry staples (oil, salt, pepper, water).
+        
+        Format the output strictly as a JSON list of objects with these keys:
+        - name: Recipe Name
+        - time: Preparation time (e.g., "30 mins")
+        - difficulty: "Easy", "Medium", or "Hard"
+        - ingredients: List of strings (ingredients used)
+        - instructions: List of strings (step-by-step instructions)
+        - calories: Approximate calories per serving (number)
+        
+        Do not include markdown formatting (like ```json). Just return the raw JSON string.
+        """
+        
+        response = model.generate_content(prompt)
+        
+        # Clean up response if it contains markdown code blocks
+        text = response.text.strip()
+        if text.startswith("```json"):
+            text = text[7:]
+        if text.startswith("```"):
+            text = text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+            
+        import json
+        recipes = json.loads(text)
+        
+        return jsonify({"recipes": recipes})
+        
+    except Exception as e:
+        logger.error(f"Smart Chef Error: {e}", exc_info=True)
+        return jsonify({
+            "error": "Generation Failed",
+            "message": f"Chef is busy! Error: {str(e)}",
+            "details": str(e)
+        }), 500
+
 
 @app.route("/", methods=["GET"])
 def root():
