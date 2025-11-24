@@ -95,23 +95,23 @@ export default function MealSuggestions({ items, dietType = "balanced" }: Props)
             animate={{ opacity: 1, y: 0 }}
             className="space-y-3"
         >
-            <div className="flex items-center gap-2 mb-3">
-                <Utensils className="w-5 h-5 text-purple-400" />
-                <h3 className="font-semibold text-white">Sample Day Meals</h3>
+            <div className="flex items-center gap-2 mb-4">
+                <Utensils className="w-5 h-5 text-blue-600" />
+                <h3 className="font-semibold text-gray-800 text-lg">🍽️ Sample Day Meals</h3>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
                 {meals.map((meal, idx) => (
-                    <div key={idx} className="bg-white/5 rounded-lg p-3 border border-white/10 hover:border-purple-500/30 transition-all">
+                    <div key={idx} className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-4 border-2 border-blue-100 hover:border-blue-200 transition-all">
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xl">{meal.icon}</span>
-                            <span className="text-sm font-medium text-purple-400">{meal.time}</span>
+                            <span className="text-2xl">{meal.icon}</span>
+                            <span className="text-sm font-bold text-blue-700">{meal.time}</span>
                         </div>
-                        <ul className="text-xs text-slate-300 space-y-1">
+                        <ul className="text-sm text-gray-700 space-y-1.5">
                             {meal.items.slice(0, 3).map((item, i) => (
                                 <li key={i} className="flex items-start gap-2">
-                                    <span className="text-purple-400">•</span>
-                                    <span className="line-clamp-1">{item}</span>
+                                    <span className="text-blue-500 font-bold">•</span>
+                                    <span className="line-clamp-1 font-medium">{item}</span>
                                 </li>
                             ))}
                         </ul>
@@ -119,8 +119,8 @@ export default function MealSuggestions({ items, dietType = "balanced" }: Props)
                 ))}
             </div>
 
-            <p className="text-xs text-slate-500 italic">
-                * {isVegan ? "🌱 Vegan" : isVeg ? "🥬 Vegetarian" : "🍖 Non-Vegetarian"} meal suggestions from your basket
+            <p className="text-xs text-gray-500 italic mt-3">
+                * {isVegan ? "🌱 Vegan" : isVeg ? "🥬 Vegetarian" : "🍖 Non-Vegetarian"} meal suggestions using your basket items
             </p>
         </motion.div>
     );
