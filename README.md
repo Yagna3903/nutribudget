@@ -126,30 +126,47 @@ Frontend runs on `http://localhost:3000`
 
 ---
 
+
 ## 🎯 How It Works
 
 ### 1. Input Your Details
 Tell us your budget, household size, diet type, and health goals.
 
-### 2. ML Analysis
-Our algorithm analyzes 4,900+ products and scores them on:
-- Nutritional value (protein, fiber, vitamins)
-- Health impact (sugar, sodium, processing level)
-- Price efficiency (best nutrition per dollar)
+### 2. Machine Learning Analysis
 
-### 3. Smart Selection
-The optimizer picks the best combination of products that:
-- Fits your budget
+Our system uses **three trained ML models** working together:
+
+**🤖 Product Quality Classifier** (Random Forest)
+- Analyzes nutritional profile to classify products as High/Medium/Low quality
+- Trained on 4,900 products
+- Considers: protein, fiber, calories vs. sugar, fat, sodium
+
+**📈 Value Predictor** (Random Forest Regression)  
+- Predicts nutritional value score based on ingredients
+- Identifies products that offer exceptional nutritional value
+- Trained with cross-validation for accuracy
+
+**💰 Price Fairness Model** (Linear Regression)
+- Predicts fair price based on nutritional content
+- Flags underpriced items as "best deals"
+- Helps find hidden gems in the grocery store
+
+### 3. Intelligent Selection
+
+The ML-powered optimizer picks the best combination of products that:
+- Fits your budget perfectly
 - Matches your dietary preferences
 - Achieves your health goals
-- Maximizes variety
+- **Maximizes variety** using cluster-based diversity
+- Balances nutrition, cost, and quality
 
 ### 4. Get Your Plan
+
 Receive a complete shopping list with:
 - Exact products and quantities
 - Nutritional breakdown
 - Store locations
-- AI-generated recipes
+- AI-generated recipes (powered by Google Gemini)
 - Estimated savings
 
 ---
