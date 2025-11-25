@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 DATA_PATH = os.path.join(
     os.path.dirname(__file__),
     "data",
-    "foods_scored.csv",
+    "foods_enhanced.csv",
 )
 
 # Load dataset once at startup
