@@ -136,6 +136,14 @@ def planner(budget: float, people: int, diet_type: str, goal: str, df: pd.DataFr
                 item["estimated_cost"] = price
                 item["quantity_units"] = 1
                 
+                # Calculate nutrition per package (dataset is per 100g)
+                weight = product.get("package_weight_g", 100)
+                multiplier = weight / 100.0
+                
+                item["_calories"] = product.get("calories", 0) * multiplier
+                item["_protein"] = product.get("protein", 0) * multiplier
+                item["_fiber"] = product.get("fiber", 0) * multiplier
+                
                 basket.append(item)
                 current_spend += price
                 
