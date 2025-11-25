@@ -108,52 +108,36 @@ def planner(budget: float, people: int, diet_type: str, goal: str, df: pd.DataFr
     item_counts = {}
     cluster_spending = {}  # Track spending per cluster for diversity
     
-    # Calculate cluster budget limits (for ML mode only)
-    if use_ml and "cluster_label" in filtered.columns:
-        max_cluster_budget = budget * 0.35  # Max 35% per cluster
-    else:
-        max_cluster_budget = budget  # No limit for traditional mode
+    # Cluster tracking for variety
+    cluster_spending = {}
+    max_cluster_budget = budget * 0.35 # Max 35% of budget per cluster
     
-    for item in candidate_items:
-        price = item["price_per_100g"]
-        cluster = item.get("cluster_label", "Unknown")
+    if use_ml and "cluster_label" in filtered.columns:
+        max_cluster_budget = budget * 0.35
+    else:
+        max_cluster_budget = budget
         
-        # Check cluster budget limit (ML mode only)
-        if use_ml and cluster_spending.get(cluster, 0) + price > max_cluster_budget:
-            continue  # Skip to maintain variety
+    current_spend = 0.0
+    
+    # Cluster tracking for variety
+    cluster_spending = {}
+    max_cluster_budget = budget * 0.35 # Max 35% of budget per cluster
+    
+    for _, product in candidates.iterrows():
+        # Use item price if available, otherwise fallback (shouldn't happen with enhanced data)
+        price = product.get("price_per_item", product["price_per_100g"])
         
-        # If we can afford it
-        if total_spent + price <= budget:
-            p_id = item["product_id"]
-            current_count = item_counts.get(p_id, 0)
+        # Skip if price is missing or zero
+        if pd.isna(price) or price <= 0:
+            continue
             
-            if current_count < 5: # Max 5 units per product
+        if current_spend + price <= budget:
+            # Check cluster limit
+            cluster = product.get("cluster_label", "Uncategorized")
+            current_cluster_spend = cluster_spending.get(cluster, 0.0)
+            
+            if current_cluster_spend + price <= max_cluster_budget:
                 # Add to basket
-                existing = next((x for x in basket if x["product_id"] == p_id), None)
-                
-                if existing:
-                    existing["quantity_units"] += 1
-                    existing["estimated_cost"] += price
-                else:
-                    basket.append({
-                        "product_id": p_id,
-                        "product_name": item.get("product_name"),
-                        "store": item.get("store"),
-                        "category": item.get("category"),
-                        "cluster_label": item.get("cluster_label"),
-                        "health_score": item.get("health_score"),
-                        "nutri_score_app": item.get("nutri_score_app"),
-                        "price_per_100g": price,
-                        "quantity_units": 1,
-                        "estimated_cost": price,
-                        # Keep raw data for totals
-                        "_calories": item.get("calories", 0),
-                        "_protein": item.get("protein", 0),
-                        "_fiber": item.get("fiber", 0)
-                    })
-                
-                total_spent += price
-                item_counts[p_id] = current_count + 1
                 cluster_spending[cluster] = cluster_spending.get(cluster, 0) + price
         
         # Stop if we are very close to budget (e.g. < $0.5 left)
