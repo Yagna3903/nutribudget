@@ -26,7 +26,15 @@ DATA_PATH = os.path.join(
 )
 
 # Load dataset once at startup
+print(f"DEBUG: Loading dataset from {DATA_PATH}")
+if os.path.exists(DATA_PATH):
+    print("DEBUG: File exists")
+else:
+    print("DEBUG: FILE NOT FOUND")
+
 df = load_dataset(DATA_PATH)
+print(f"DEBUG: Loaded dataframe with {len(df)} rows")
+print(f"DEBUG: Columns: {df.columns.tolist()}")
 
 
 @app.route("/health", methods=["GET"])

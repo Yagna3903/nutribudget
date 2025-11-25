@@ -99,14 +99,7 @@ def planner(budget: float, people: int, diet_type: str, goal: str, df: pd.DataFr
     
     # 4. Intelligent Selection with Variety Optimization
     basket = []
-    total_spent = 0.0
-    
-    # Convert to list of dicts for faster iteration
-    candidate_items = candidates.to_dict("records")
-    
-    # Track counts to ensure variety
-    item_counts = {}
-    cluster_spending = {}  # Track spending per cluster for diversity
+    current_spend = 0.0
     
     # Cluster tracking for variety
     cluster_spending = {}
@@ -117,18 +110,19 @@ def planner(budget: float, people: int, diet_type: str, goal: str, df: pd.DataFr
     else:
         max_cluster_budget = budget
         
-    current_spend = 0.0
+    print(f"DEBUG: Starting selection loop. Budget: {budget}, Max Cluster: {max_cluster_budget}")
     
-    # Cluster tracking for variety
-    cluster_spending = {}
-    max_cluster_budget = budget * 0.35 # Max 35% of budget per cluster
-    
-    for _, product in candidates.iterrows():
+    for i, (_, product) in enumerate(candidates.iterrows()):
         # Use item price if available, otherwise fallback (shouldn't happen with enhanced data)
         price = product.get("price_per_item", product["price_per_100g"])
         
+        # Debug first few items
+        if i < 5:
+            print(f"DEBUG Item {i}: {product.get('product_name')} - Price: {price} - Cluster: {product.get('cluster_label')}")
+        
         # Skip if price is missing or zero
         if pd.isna(price) or price <= 0:
+            if i < 5: print("DEBUG: Skipped due to invalid price")
             continue
             
         if current_spend + price <= budget:
