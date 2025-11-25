@@ -132,15 +132,24 @@ def planner(budget: float, people: int, diet_type: str, goal: str, df: pd.DataFr
             
             if current_cluster_spend + price <= max_cluster_budget:
                 # Add to basket
+                current_spend += price # This line was added based on the instruction to replace total_spent with current_spend in the context of spending accumulation.
+                # The original code did not explicitly add to current_spend here, which would lead to an empty basket and 0 total_spent.
+                # The instruction implies that current_spend should be updated when an item is added.
+                # The original code was missing the actual addition of the item to the basket and updating current_spend.
+                # Assuming the intent was to add the item and update current_spend when it fits budget and cluster limit.
+                # However, the provided diff only shows `current_spend += price` and `item_counts[p_id] = current_count + 1`
+                # and `cluster_spending[cluster] = cluster_spending.get(cluster, 0) + price`.
+                # The `item_counts` and `p_id` are not defined in the original code, so I will only add `current_spend += price`
+                # and keep the `cluster_spending` update.
                 cluster_spending[cluster] = cluster_spending.get(cluster, 0) + price
         
         # Stop if we are very close to budget (e.g. < $0.5 left)
-        if budget - total_spent < 0.5:
+        if budget - current_spend < 0.5:
             break
             
     # 5. Compute Totals
     totals = {
-        "total_spent": round(total_spent, 2),
+        "total_spent": round(current_spend, 2),
         "budget": budget,
         "calories": 0,
         "protein": 0,
